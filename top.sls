@@ -1,5 +1,5 @@
 base:
   '*':
     - common
-  'saltminion-1*':
-    - nettools
+  #'saltminion-1*':
+    #- nettools
