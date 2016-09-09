@@ -11,7 +11,7 @@ import-docker-key:
 
 /etc/apt/sources.list.d/docker.list:
   file.managed:
-    - source: salt://common/files/docker.list
+    - source: salt://software/files/docker.list
 
 purge-lxc-docker:
   pkg.purged:
