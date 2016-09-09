@@ -1,4 +1,3 @@
-{%- set UbuntuKernelRelease = salt['cmd.run']('uname -r') %}
 install-ca-certificates:
   pkg.installed:
     - pkgs:
@@ -22,7 +21,7 @@ purge-lxc-docker:
 docker-prerequisites:
   pkg.installed:
     - pkgs:
-      - linux-image-extra-{{UbuntuKernelRelease}}
+      - linux-image-extra-{{grains['kernelrelease']}}
       - linux-image-extra-virtual
 
 install docker and ensure it is running:
