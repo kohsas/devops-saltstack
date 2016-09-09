@@ -1,4 +1,0 @@
-base:
-  '*':
-    - common
-    - software.docker
