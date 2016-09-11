@@ -1,3 +1,10 @@
+#
+# Docker install for Ubuntu 14.04, 15.10 and 16.04
+#
+{% if grains['os'] == 'Ubuntu' %}
+{% if grains['osrelease'] == '14.04' or grains['osrelease'] == '15.10' or grains['osrelease'] == '16.04' %}
+{% set osfinger = grains['osfinger'] %}
+
 install-ca-certificates:
   pkg.installed:
     - pkgs:
@@ -11,7 +18,7 @@ import-docker-key:
 
 /etc/apt/sources.list.d/docker.list:
   file.managed:
-    - source: salt://software/files/docker.list
+    - source: salt://software/files/docker-{{ osfinger }}.list
 
 purge-lxc-docker:
   pkg.purged:
@@ -29,3 +36,6 @@ install docker and ensure it is running:
     - name: docker-engine
   service.running:  
     - name: docker
+
+{% endif %}
+{% endif %}
