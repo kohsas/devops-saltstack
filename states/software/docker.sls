@@ -36,6 +36,8 @@ install docker and ensure it is running:
     - name: docker-engine
   service.running:  
     - name: docker
+  require:
+    - pkg : docker-prerequisites
 
 {% endif %}
 {% endif %}
