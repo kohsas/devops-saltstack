@@ -16,6 +16,6 @@ sudo cp $providers  /etc/salt/cloud.providers.d/
 
 echo "[INFO] copying $profiles"
 echo -e "salt-master:\n  minion:$nodename\n\n$(cat  $profiles)" > $profiles_tmp
-sudo cp $profiles_tmp  /etc/salt/cloud.profiles.d/
+sudo cp $profiles_tmp  /etc/salt/cloud.profiles.d/gle.conf
 sudo cp $basedir/cloud/keys/gle-service-account-private-key.json  /etc/salt/
 sudo chmod 0600 '/etc/salt/gle-service-account-private-key.json'
