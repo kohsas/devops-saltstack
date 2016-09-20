@@ -16,7 +16,7 @@ echo "[INFO] copying $providers"
 sudo cp $providers  /etc/salt/cloud.providers.d/
 
 echo "[INFO] copying $profiles"
-echo -e "$(cat $pre_preprofile)  minion:\n    master: $nodename\n\n$(cat  $profiles)" > $profiles_tmp
+echo -e "$(cat $pre_profile)  minion:\n    master: $nodename\n\n$(cat  $profiles)" > $profiles_tmp
 sudo cp $profiles_tmp  /etc/salt/cloud.profiles.d/gle.conf
 echo "[INFO] copying service account key"
 sudo cp $basedir/cloud/keys/gle-service-account-private-key.json  /etc/salt/
