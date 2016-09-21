@@ -30,4 +30,4 @@ echo "[INFO] copying service account key"
 sudo cp $basedir/cloud/keys/gle-service-account-private-key.json  $destination
 sudo chmod 0600 $destination/gle-service-account-private-key.json
 echo "[INFO] copying custom master bootstrap script"
-sudo cp $basedir/scripts/bootstrap_salt_master.sh $basedir/cloud.deploy.d/
+sudo cp $basedir/scripts/bootstrap_salt_master.sh $destination/cloud.deploy.d/
