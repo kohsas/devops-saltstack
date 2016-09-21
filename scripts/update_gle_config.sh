@@ -20,5 +20,5 @@ echo "[INFO] copying $profiles"
 echo -e "$(cat $pre_profile)minion:\n    master: $nodename\n\n$(cat  $profiles)" > $profiles_tmp
 sudo cp $profiles_tmp  $destination/cloud.profiles.d/gle.conf
 echo "[INFO] copying service account key"
-sudo cp $basedir/cloud/keys/gle-service-account-private-key.json  /etc/salt/
+sudo cp $basedir/cloud/keys/gle-service-account-private-key.json  $destination
 sudo chmod 0600 $destination/gle-service-account-private-key.json
