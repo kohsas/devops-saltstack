@@ -6,7 +6,7 @@ sudo apt-get update
 sudo apt-get install python-pip git -y
 sudo pip install -I apache-libcloud==0.20.1
 # install salt master
-curl -L https://bootstrap.saltstack.com | sudo sh -s -- -P -M -N -L -S  
+curl -L https://bootstrap.saltstack.com | sudo sh -s -- -P -M -L -S  
 sudo apt-get install salt-cloud
 sudo salt-cloud -u
 #  put the google compute keys in google storage and copy it to the instance when we have to
