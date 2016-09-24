@@ -296,7 +296,7 @@ __gather_system_info() {
 
 __gather_system_info
 
-while getopts "hvSNB:" opt
+while getopts "hvSNB:c:" opt
 do
   case "${opt}" in
      h )  __usage; exit 0                                ;;
@@ -307,16 +307,16 @@ do
      c )  _TEMP_CONFIG_DIR=$(__check_config_dir "$OPTARG")
          # If the configuration directory does not exist, error out
          if [ "$_TEMP_CONFIG_DIR" = "null" ]; then
-             echoerror "Unsupported URI scheme for $OPTARG"
+             echo "Unsupported URI scheme for $OPTARG"
              exit 1
          fi
          if [ ! -d "$_TEMP_CONFIG_DIR" ]; then
-             echoerror "The configuration directory ${_TEMP_CONFIG_DIR} does not exist."
+             echo "The configuration directory ${_TEMP_CONFIG_DIR} does not exist."
              exit 1
          fi
          ;;
      \?)  echo
-         echoerror "Option does not exist : $OPTARG"
+         echo "Option does not exist : $OPTARG"
          __usage
          exit 1
          ;;
