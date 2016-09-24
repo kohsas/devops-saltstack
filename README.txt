@@ -9,8 +9,7 @@ For a new project clone this project and run the setup script
 2)  fork this project
       >gcloud source repos clone saltstack --project=salt-stack
 3)  run the setup scripts
-      3.1) >cd saltstack
-      3.2) >./scripts/bootstrap_salt_master.sh
+      >./saltstack/scripts/bootstrap_salt_master.sh
 
 This will create a salt-master with all the required
 
