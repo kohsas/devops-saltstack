@@ -1,17 +1,22 @@
 README
 ------
 
+New project
+------------
 For a new project clone this project and run the setup script
 
--  setup the initial machine
--  fork this project
--  run the setup scripts
--  checkin the generated files
--  run the cloud update script
+1)  Create a new machine 
+2)  fork this project
+      >gcloud source repos clone saltstack --project=salt-stack
+3)  run the setup scripts
+      3.1) >cd saltstack
+      3.2) >./scripts/bootstrap_salt_master.sh
+
+This will create a salt-master with all the required
 
 
-Setup the initial machine
--------------------------
+
+
 
 @google_compute_engine
   These keys are used for installing minions (using salt-cloud)

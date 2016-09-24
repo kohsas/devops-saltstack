@@ -50,6 +50,7 @@ _CLONE_GIT_REPO=$BS_TRUE
 _NODE_NAME=`uname -n`
 _SALT_CONFIG_DIR='/etc/salt'
 _GSTORE_BUCKET='salt-stack.appspot.com'
+_TEMP_CONFIG_DIR="null"
 
 #---  FUNCTION  -------------------------------------------------------------------------------------------------------
 #          NAME:  __parse_version_string
@@ -303,6 +304,17 @@ do
      S )  _INSTALL_SYNDIC=$BS_TRUE                       ;;
      N )  _INSTALL_MINION=$BS_FALSE                      ;;
      B )  _GSTORE_BUCKET=$OPTARG                         ;;
+     c )  _TEMP_CONFIG_DIR=$(__check_config_dir "$OPTARG")
+         # If the configuration directory does not exist, error out
+         if [ "$_TEMP_CONFIG_DIR" = "null" ]; then
+             echoerror "Unsupported URI scheme for $OPTARG"
+             exit 1
+         fi
+         if [ ! -d "$_TEMP_CONFIG_DIR" ]; then
+             echoerror "The configuration directory ${_TEMP_CONFIG_DIR} does not exist."
+             exit 1
+         fi
+         ;;
      \?)  echo
          echoerror "Option does not exist : $OPTARG"
          __usage
@@ -328,6 +340,12 @@ fi
 #dont start the deamons
 _SCRIPT_OPTIONS="$_SCRIPT_OPTIONS -X"
 
+if [ "$_TEMP_CONFIG_DIR" != "null" ]; then
+  _SCRIPT_OPTIONS="$_SCRIPT_OPTIONS -c $_TEMP_CONFIG_DIR"
+fi
+
+
+
 #some required packages
 sudo apt-get update
 sudo apt-get install python-pip git -y
@@ -348,13 +366,16 @@ fi
 
 #  put the google compute keys in google storage and copy it to the instance when we have to
 _GSTORE_KEY_PATH="gs://$_GSTORE_BUCKET/salt-master/keys"
+#[TODO] is this required
 sudo mkdir /root/.ssh
 sudo gsutil cp $_GSTORE_KEY_PATH/google* /root/.ssh/
 sudo chmod 600 /root/.ssh/google_compute_engine
+#This is required as gle profiles have this path
 sudo cp  /root/.ssh/google_compute_engine $_SALT_CONFIG_DIR/google_compute_engine
 
 #clone the git repository for getting the cloud files so that we can install them
 # [TODO] this should change to get this data from some where rather than
+# [TODO] did not work on debian the dir existed so it should not have tried to install the repo
 if [ -d _GIT_REPO_NAME ]; then
   if [ !-d "$_GIT_REPO_NAME/.git"]; then
     _GIT_REPO_NAME="$_GIT_REPO_NAME-$RANDOM"
