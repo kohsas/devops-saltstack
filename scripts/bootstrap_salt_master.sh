@@ -1,6 +1,8 @@
 #! /bin/bash
-
-# [TODO] command line parameters for minion required
+#   Testing information
+#         Debian jessie   No Flags/
+#         Ubuntu 14.04    No Flags/
+#
 set -o nounset                              # Treat unset variables as an error
 
 __ScriptVersion="2016.09.24"
@@ -344,16 +346,12 @@ if [ "$_INSTALL_MINION" -eq $BS_TRUE ]; then
   sudo mv $_NODE_NAME.pub $_SALT_CONFIG_DIR/pki/master/minions/$_NODE_NAME
 fi
 
-#install the salt cloud -- do we need this -- [TODO] check
-sudo apt-get install salt-cloud
-sudo salt-cloud -u
-
-#
 #  put the google compute keys in google storage and copy it to the instance when we have to
 _GSTORE_KEY_PATH="gs://$_GSTORE_BUCKET/salt-master/keys"
 sudo mkdir /root/.ssh
 sudo gsutil cp $_GSTORE_KEY_PATH/google* /root/.ssh/
 sudo chmod 600 /root/.ssh/google_compute_engine
+sudo cp  /root/.ssh/google_compute_engine $_SALT_CONFIG_DIR/google_compute_engine
 
 #clone the git repository for getting the cloud files so that we can install them
 # [TODO] this should change to get this data from some where rather than
@@ -367,7 +365,8 @@ fi
 
 #clone the salt configuration repos
 if [ "$_CLONE_GIT_REPO" -eq $BS_TRUE ]; then
-  gcloud source repos clone $_GIT_REPO_NAME --project=salt-stack
+  sudo apt-get install git -y
+  sudo gcloud source repos clone $_GIT_REPO_NAME --project=salt-stack
 fi
 
 #update the cloud provide and profiles
@@ -381,6 +380,16 @@ echo -e "id: $_NODE_NAME" | sudo tee -a $_SALT_CONFIG_DIR/minion.d/minion_id.con
 #
 # [TODO] for the rest we need to start the deamon
 #
-echo "[INFO] Restarting the salt-master and salt-minion"
-sudo service salt-master restart
-sudo service salt-minion restart
+
+if [ "$DISTRO_NAME" == "Ubuntu" ]; then
+  echo "[INFO] Starting the salt-master and salt-minion"
+  sudo service salt-master stop
+  sudo service salt-minion stop
+  sleep 0.1
+  sudo service salt-master start
+  sudo service salt-minion start
+else
+  echo "[INFO] Restarting the salt-master and salt-minion"
+  sudo service salt-master restart
+  sudo service salt-minion restart
+fi
