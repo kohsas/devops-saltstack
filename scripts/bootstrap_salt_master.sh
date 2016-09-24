@@ -376,7 +376,7 @@ sudo cp  /root/.ssh/google_compute_engine $_SALT_CONFIG_DIR/google_compute_engin
 #clone the git repository for getting the cloud files so that we can install them
 # [TODO] this should change to get this data from some where rather than
 # [TODO] did not work on debian the dir existed so it should not have tried to install the repo
-if [ -d _GIT_REPO_NAME ]; then
+if [ -d $_GIT_REPO_NAME ]; then
   if [ !-d "$_GIT_REPO_NAME/.git"]; then
     _GIT_REPO_NAME="$_GIT_REPO_NAME-$RANDOM"
   else
