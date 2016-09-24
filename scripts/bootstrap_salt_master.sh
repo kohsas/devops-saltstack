@@ -31,7 +31,9 @@ sudo chmod 600 /root/.ssh/google_compute_engine
 
 #clone the git repository for getting the cloud files so that we can install them
 # [TODO] this should change to get this data from some where rather than
-gcloud source repos clone saltstack --project=salt-stack
+if [ ! -d "saltstack" ]; then
+  gcloud source repos clone saltstack --project=salt-stack
+fi
 cd saltstack && scripts/update_gle_config.sh . $nodename '/etc/salt'
 
 echo -e "id: $nodename" | sudo tee -a /etc/salt/minion.d/minion_id.conf
