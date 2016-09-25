@@ -402,6 +402,10 @@ sudo apt-get update
 sudo apt-get install python-pip git -y
 sudo pip install -I apache-libcloud==0.20.1
 
+if [ "$_TEMP_CONFIG_DIR" != "null" ]; then
+  echo -e `ls`
+fi
+
 # install salt master and minion
 curl -L https://bootstrap.saltstack.com | sudo sh -s -- $_SCRIPT_OPTIONS -K
 
