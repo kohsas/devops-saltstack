@@ -39,6 +39,9 @@ __usage() {
     -S  Do not install salt-syndic
     -N  Do not install salt-minion
     -B  Pass the google cloud bucket name containing the keys for the saltuser
+    -c  Temporary configuration directory
+    -M  Supported for salt-cloud compatibility
+    -G  The minion master is the node itself
 EOT
 }   # ----------  end of function __usage  ---------
 
@@ -51,6 +54,7 @@ _NODE_NAME=`uname -n`
 _SALT_CONFIG_DIR='/etc/salt'
 _GSTORE_BUCKET='salt-stack.appspot.com'
 _TEMP_CONFIG_DIR="null"
+_SELF_MINION=$BS_FALSE
 
 #---  FUNCTION  -------------------------------------------------------------------------------------------------------
 #          NAME:  __parse_version_string
@@ -347,13 +351,14 @@ __check_config_dir() {
 
 __gather_system_info
 
-while getopts "hvSNB:c:M" opt
+while getopts "hvSNB:c:MG" opt
 do
   case "${opt}" in
      h )  __usage; exit 0                                ;;
      v )  echo "$0 -- Version $__ScriptVersion"; exit 0  ;;
      S )  _INSTALL_SYNDIC=$BS_TRUE                       ;;
      N )  _INSTALL_MINION=$BS_FALSE                      ;;
+     G )  _SELF_MINION=$BS_TRUE                          ;;
      B )  _GSTORE_BUCKET=$OPTARG                         ;;
      c )  _TEMP_CONFIG_DIR=$(__check_config_dir "$OPTARG")
          # If the configuration directory does not exist, error out
@@ -385,7 +390,9 @@ fi
 if [ "$_INSTALL_MINION" -eq $BS_FALSE ]; then
   _SCRIPT_OPTIONS="$_SCRIPT_OPTIONS -N"
 else
-  _SCRIPT_OPTIONS="$_SCRIPT_OPTIONS -A $_NODE_NAME"
+   if [ "$_SELF_MINION" -eq $BS_TRUE ]; then
+     _SCRIPT_OPTIONS="$_SCRIPT_OPTIONS -A $_NODE_NAME"
+   fi
 fi
 
 #dont start the deamons
@@ -402,14 +409,10 @@ sudo apt-get update
 sudo apt-get install python-pip git -y
 sudo pip install -I apache-libcloud==0.20.1
 
-if [ "$_TEMP_CONFIG_DIR" != "null" ]; then
-  echo -e `ls`
-fi
-
 # install salt master and minion
-curl -L https://bootstrap.saltstack.com | sudo sh -s -- $_SCRIPT_OPTIONS -K
+curl -L https://bootstrap.saltstack.com | sudo sh -s -- $_SCRIPT_OPTIONS
 
-if [ "$_INSTALL_MINION" -eq $BS_TRUE ]; then
+if ([ "$_INSTALL_MINION" -eq $BS_TRUE ] && [ "$_SELF_MINION" -eq $BS_TRUE ]); then
   #this node is also a minion.
   #generate the ssh keys and make sure the master has accepted it
   sudo salt-key --gen-keys=$_NODE_NAME
