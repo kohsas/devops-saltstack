@@ -403,7 +403,7 @@ sudo apt-get install python-pip git -y
 sudo pip install -I apache-libcloud==0.20.1
 
 # install salt master and minion
-curl -L https://bootstrap.saltstack.com | sudo sh -s -- $_SCRIPT_OPTIONS
+curl -L https://bootstrap.saltstack.com | sudo sh -s -- $_SCRIPT_OPTIONS -K
 
 if [ "$_INSTALL_MINION" -eq $BS_TRUE ]; then
   #this node is also a minion.
@@ -413,6 +413,7 @@ if [ "$_INSTALL_MINION" -eq $BS_TRUE ]; then
   sudo cp $_NODE_NAME.pub $_SALT_CONFIG_DIR/pki/minion/minion.pub
   sudo mv $_NODE_NAME.pem $_SALT_CONFIG_DIR/pki/minion/minion.pem
   sudo mv $_NODE_NAME.pub $_SALT_CONFIG_DIR/pki/master/minions/$_NODE_NAME
+  sudo cp $_SALT_CONFIG_DIR/pki/master/master.pub $_SALT_CONFIG_DIR/pki/minion/minion_master.pub
 fi
 
 #  put the google compute keys in google storage and copy it to the instance when we have to
