@@ -356,7 +356,7 @@ do
   case "${opt}" in
      h )  __usage; exit 0                                ;;
      v )  echo "$0 -- Version $__ScriptVersion"; exit 0  ;;
-     S )  _INSTALL_SYNDIC=$BS_TRUE                       ;;
+     S )  _INSTALL_SYNDIC=$BS_FALSE                      ;;
      N )  _INSTALL_MINION=$BS_FALSE                      ;;
      G )  _SELF_MINION=$BS_TRUE                          ;;
      B )  _GSTORE_BUCKET=$OPTARG                         ;;
@@ -452,8 +452,18 @@ fi
 #update the cloud provide and profiles
 cd $_GIT_REPO_NAME && scripts/update_gle_config.sh . $_NODE_NAME $_SALT_CONFIG_DIR
 
-#install the configuration directory
+#install the minion id in the configuration directory
 echo -e "id: $_NODE_NAME" | sudo tee -a $_SALT_CONFIG_DIR/minion.d/minion_id.conf
+
+if [ "$_INSTALL_SYNDIC" -eq "$BS_FALSE" ]; then 
+  #install the syndic configuration as this is a master where we are not installing a 
+  # syndic which means this could be a master of masters
+  echo -e "order_masters: True | sudo tee -a $_SALT_CONFIG_DIR/master.d/syndic.conf
+else
+  # this is a master and is not a master of masters. Lets make this a syndic to the master of masters
+  # which we assume to be the mastet of the minion we are to
+  sudo grep ^master $_SALT_CONFIG_DIR/minion | sed s/master/syndic_master/ > $_SALT_CONFIG_DIR/minion.d/syndic_master.conf
+fi
 
 #the -X should not have stared the deamons but for debian it does not work
 # so for debian we need to restart the master and minion
