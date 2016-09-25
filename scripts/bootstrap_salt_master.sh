@@ -458,8 +458,10 @@ echo -e "id: $_NODE_NAME" | sudo tee -a $_SALT_CONFIG_DIR/minion.d/minion_id.con
 if [ "$_INSTALL_SYNDIC" -eq "$BS_FALSE" ]; then 
   #install the syndic configuration as this is a master where we are not installing a 
   # syndic which means this could be a master of masters
+  echo "[INFO] This is a master of masters---------------------------------"
   echo -e "order_masters: True" | sudo tee -a $_SALT_CONFIG_DIR/master.d/syndic.conf
 else
+  echo "[INFO] This is a syndic should have create as syndic config---------------------------------"
   # this is a master and is not a master of masters. Lets make this a syndic to the master of masters
   # which we assume to be the mastet of the minion we are to
   sudo grep ^master $_SALT_CONFIG_DIR/minion | sed s/master/syndic_master/ > $_SALT_CONFIG_DIR/minion.d/syndic_master.conf
