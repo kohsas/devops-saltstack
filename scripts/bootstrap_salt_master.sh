@@ -347,7 +347,7 @@ __check_config_dir() {
 
 __gather_system_info
 
-while getopts "hvSNB:c:" opt
+while getopts "hvSNB:c:M" opt
 do
   case "${opt}" in
      h )  __usage; exit 0                                ;;
