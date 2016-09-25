@@ -436,7 +436,7 @@ sudo cp  /root/.ssh/google_compute_engine $_SALT_CONFIG_DIR/google_compute_engin
 # [TODO] this should change to get this data from some where rather than
 # [TODO] did not work on debian the dir existed so it should not have tried to install the repo
 if [ -d $_GIT_REPO_NAME ]; then
-  if [ !-d "$_GIT_REPO_NAME/.git"]; then
+  if [ !-d "$_GIT_REPO_NAME/.git" ]; then
     _GIT_REPO_NAME="$_GIT_REPO_NAME-$RANDOM"
   else
     _CLONE_GIT_REPO=$BS_FALSE
@@ -458,7 +458,7 @@ echo -e "id: $_NODE_NAME" | sudo tee -a $_SALT_CONFIG_DIR/minion.d/minion_id.con
 if [ "$_INSTALL_SYNDIC" -eq "$BS_FALSE" ]; then 
   #install the syndic configuration as this is a master where we are not installing a 
   # syndic which means this could be a master of masters
-  echo -e "order_masters: True | sudo tee -a $_SALT_CONFIG_DIR/master.d/syndic.conf
+  echo -e "order_masters: True" | sudo tee -a $_SALT_CONFIG_DIR/master.d/syndic.conf
 else
   # this is a master and is not a master of masters. Lets make this a syndic to the master of masters
   # which we assume to be the mastet of the minion we are to
