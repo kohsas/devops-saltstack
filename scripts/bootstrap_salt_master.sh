@@ -485,3 +485,7 @@ else
   sudo service salt-master restart
   sudo service salt-minion restart
 fi
+
+if [ "$_INSTALL_SYNDIC" -eq "$BS_TRUE" ]; then
+  sudo service salt-syndic restart
+fi 
