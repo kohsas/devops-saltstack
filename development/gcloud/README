@@ -1,0 +1,9 @@
+Create a development enviorment
+===============================
+
+a) fill in the salt.conf and copy to the config directory
+b) copy the p12 key to the config directory
+c) copy the google_compute_keys to the config directory
+b) docker build -t ashsat/gcloud .  
+c) docker run -t -i -h ashok-salt-dev -v /Users/ashoksathyanarayan/workspace/google-cloud/:/src ashsat/gcloud
+
