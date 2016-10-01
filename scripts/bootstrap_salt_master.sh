@@ -8,10 +8,47 @@ set -o nounset                              # Treat unset variables as an error
 __ScriptVersion="2016.09.24"
 __ScriptName="bootstrap_salt_master.sh"
 
+RC="\033[1;31m"
+GC="\033[1;32m"
+BC="\033[1;34m"
+YC="\033[1;33m"
+EC="\033[0m"
 
 # Bootstrap script truth values
 BS_TRUE=1
 BS_FALSE=0
+
+#---  FUNCTION  -------------------------------------------------------------------------------------------------------
+#          NAME:  echoerr
+#   DESCRIPTION:  Echo errors to stderr.
+#----------------------------------------------------------------------------------------------------------------------
+echoerror() {
+    printf "${RC} * ERROR${EC}: %s\n" "$@" 1>&2;
+}
+
+#---  FUNCTION  -------------------------------------------------------------------------------------------------------
+#          NAME:  echoinfo
+#   DESCRIPTION:  Echo information to stdout.
+#----------------------------------------------------------------------------------------------------------------------
+echoinfo() {
+    printf "${GC} *  INFO${EC}: %s\n" "$@";
+}
+
+#---  FUNCTION  -------------------------------------------------------------------------------------------------------
+#          NAME:  echowarn
+#   DESCRIPTION:  Echo warning informations to stdout.
+#----------------------------------------------------------------------------------------------------------------------
+echowarn() {
+    printf "${YC} *  WARN${EC}: %s\n" "$@";
+}
+
+#---  FUNCTION  -------------------------------------------------------------------------------------------------------
+#          NAME:  echodebug
+#   DESCRIPTION:  Echo debug information to stdout.
+#----------------------------------------------------------------------------------------------------------------------
+echodebug() {
+  printf "${BC} * DEBUG${EC}: %s\n" "$@";
+}
 
 #---  FUNCTION  -------------------------------------------------------------------------------------------------------
 #         NAME:  __usage
@@ -351,6 +388,14 @@ __check_config_dir() {
 
 __gather_system_info
 
+_RC=$(curl -s -o /dev/null -w "%{http_code}" http://metadata.google.internal/computeMetadata/v1/instance/attributes/cmdParms -H "Metadata-Flavor: Google")
+if [ "$_RC" == "200" ]; then
+  _P=$(curl http://metadata.google.internal/computeMetadata/v1/instance/attributes/cmdParms -H "Metadata-Flavor: Google")
+  set -- $_P $@
+fi
+
+echoinfo "command Line Parms: $@"
+
 while getopts "hvSNB:c:MG" opt
 do
   case "${opt}" in
@@ -372,7 +417,7 @@ do
          fi
          ;;
      \?)  echo
-         echo "Option does not exist : $OPTARG"
+         echoerror "Option does not exist : $OPTARG"
          __usage
          exit 1
          ;;
@@ -380,7 +425,7 @@ do
   esac    # --- end of case ---
 done
 
-echo "  Distribution: ${DISTRO_NAME} ${DISTRO_VERSION}"
+echoinfo "  Distribution: ${DISTRO_NAME} ${DISTRO_VERSION}"
 
 
 if [ "$_INSTALL_SYNDIC" -eq $BS_TRUE ]; then
@@ -458,10 +503,10 @@ echo -e "id: $_NODE_NAME" | sudo tee -a $_SALT_CONFIG_DIR/minion.d/minion_id.con
 if [ "$_INSTALL_SYNDIC" -eq "$BS_FALSE" ]; then 
   #install the syndic configuration as this is a master where we are not installing a 
   # syndic which means this could be a master of masters
-  echo "[INFO] This is a master of masters---------------------------------"
+  echoinfo "This is a master of masters"
   echo -e "order_masters: True" | sudo tee -a $_SALT_CONFIG_DIR/master.d/syndic.conf
 else
-  echo "[INFO] This is a syndic should have create as syndic config---------------------------------"
+  echoinfo "This is a syndic should have create as syndic config"
   # this is a master and is not a master of masters. Lets make this a syndic to the master of masters
   # which we assume to be the mastet of the minion we are to
   sudo grep ^master $_SALT_CONFIG_DIR/minion | sed s/master/syndic_master/ > $_SALT_CONFIG_DIR/minion.d/syndic_master.conf
@@ -489,3 +534,5 @@ fi
 if [ "$_INSTALL_SYNDIC" -eq "$BS_TRUE" ]; then
   sudo service salt-syndic restart
 fi 
+
+echoinfo "BOOTSTRAP_SALT_MASTER DONE"

@@ -38,6 +38,11 @@ echodebug() {
   printf "${BC} * DEBUG${EC}: %s\n" "$@";
 }
 
+#---  FUNCTION  -------------------------------------------------------------------------------------------------------
+#          NAME:  parse_config_file_for_item
+#   DESCRIPTION:  Used to parse a config file item
+#----------------------------------------------------------------------------------------------------------------------
+
 parse_config_file_for_item() {
     awk -v section="$2" -v variable="$3" '
       $0 == "[" section "]" { in_section = 1; next }
@@ -56,13 +61,10 @@ parse_config_file_for_item() {
   ' "$1"
   
 }
-
-trim_leading_blank() {
-  _ARG=$1
-  echo $_ARG
- "echo "$_ARG"| sed -e 's/^[[:space:]]*//'"
-}
-
+#---  FUNCTION  -------------------------------------------------------------------------------------------------------
+#          NAME:  parser_config_file
+#   DESCRIPTION:  Parse the config file
+#----------------------------------------------------------------------------------------------------------------------
 parser_config_file() {
   _CONFIG_FILE=$1
   echodebug "Using config file $_CONFIG_FILE"
@@ -72,6 +74,11 @@ parser_config_file() {
   _GCLOUD_PROJECT="$(echo -e $( parse_config_file_for_item $_CONFIG_FILE gcloud project ) | sed -e 's/^[[:space:]]*//')"
   _GCLOUD_KEY="$(echo -e $( parse_config_file_for_item $_CONFIG_FILE gcloud key )| sed -e 's/^[[:space:]]*//')"
 }
+
+#---  FUNCTION  -------------------------------------------------------------------------------------------------------
+#          NAME:  print_config
+#   DESCRIPTION:  print all the parsed parameters
+#----------------------------------------------------------------------------------------------------------------------
 
 print_config(){
   echodebug "GIT EMAIL:$_GIT_EMAIL"

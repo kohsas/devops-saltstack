@@ -3,7 +3,8 @@ FROM google/cloud-sdk
 RUN apt-get update
 RUN apt-get install git -y
 RUN apt-get install vim -y
-RUN apt-get install sudo
+RUN apt-get install sudo -y
+RUN apt-get install curl -y
 
 RUN adduser --disabled-password --gecos '' saltuser
 RUN adduser saltuser sudo
